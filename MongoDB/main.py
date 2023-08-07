@@ -120,13 +120,60 @@ def replace_one(person_id):
 
     person_collection.replace_one({"_id":_id},new_doc)
 
-insert_test_doc()
-create_documents()
-find_all_people()
-find_tim()
-count_all_people()
-get_person_by_id("643a6e241912dda2456a6370")
-get_age_range(20,35)
-project_columns()
-update_person_by_id("643a6e241912dda2456a636e")
-replace_one("643a6e241912dda2456a636e")
+
+def delete_doc_by_id(person_id):
+    from bson.objectid import ObjectId
+    _id = ObjectId(person_id)
+    person_collection.delete_one({"_id":_id})
+
+    # person_collection.delete_many({})
+
+# insert_test_doc()
+# create_documents()
+# find_all_people()
+# find_tim()
+# count_all_people()
+# get_person_by_id("643a6e241912dda2456a6370")
+# get_age_range(20,35)
+# project_columns()
+# update_person_by_id("643a6e241912dda2456a636e")
+# replace_one("643a6e241912dda2456a636e")
+# delete_doc_by_id("643a6e241912dda2456a636e")
+
+#----------------------------------------------------------
+
+
+address = {
+    "_id": "",
+    "street": "Bay Street",
+    "number": 2706,
+    "city": "San Francisco",
+    "country": "United States",
+    "zip": "94017",
+    # "owner_id": "" # foreign key _id of person
+}
+
+person = {
+"_id": "",
+"first_name": "john"
+}
+
+def add_address_embed(person_id, address):
+    from bson.objectid import ObjectId
+    _id = ObjectId(person_id)
+
+    person_collection.update_one({"_id":_id}, {"$addToSet": {"addresses": address}})
+
+def add_address_relationship(person_id, address):
+    from bson.objectid import ObjectId
+    _id = ObjectId(person_id)
+
+    address = address.copy()
+    address["owner_id"] = person_id
+
+    address_collection = production.address
+    address_collection.insert_one(address)
+
+
+add_address_embed("", address)
+add_address_relationship("",address)
